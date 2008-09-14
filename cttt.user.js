@@ -20,6 +20,7 @@ function letsJQuery() {
       var $elem = $(this);
       var gist_reference = extract_gist_reference($elem);
       if(gist_reference) {
+        $elem.attr("href", gist_reference)
         $elem.wrap('<div class="gist-wrapper">')
         $(this.parentNode).append($('<iframe style="width:100%; padding:0; margin:0;" frameborder="0" src="' +
                          gist_reference +
