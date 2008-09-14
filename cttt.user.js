@@ -17,11 +17,11 @@ function extract_gist_reference($link) {
 function letsJQuery() {
   $("div:not(.quoted) > a[href*=gist.github.com]").each(
     function() {
-      var $elem = $(this); var $parent = $(this.parentNode);
+      var $elem = $(this);
       var gist_reference = extract_gist_reference($elem);
       if(gist_reference) {
         $elem.wrap('<div class="gist-wrapper">')
-        $parent.append($('<iframe style="width:100%; padding:0; margin:0;" frameborder="0" src="' +
+        $(this.parentNode).append($('<iframe style="width:100%; padding:0; margin:0;" frameborder="0" src="' +
                          gist_reference +
                          ".pibb\" />"));
       }
