@@ -61,6 +61,10 @@ function make_hot_skitchs($) {
    Keynav support
    ======================================== */
 
+function no_modifiers(event) {
+  return !(event.ctrlKey || event.altKey || event.metaKey)
+}
+
 function install_key_navigation($) {
   var posts = $('div.post')
   if(posts.length > 0) {
@@ -68,7 +72,7 @@ function install_key_navigation($) {
     var post_offset = 0;
     
     var up_post = function(e) {
-      if(post_offset > 0 && e.which == 112) {
+      if(post_offset > 0 && (e.which == 112 && no_modifiers(e))) {
         post_offset = post_offset - 1
         $.scrollTo(posts[post_offset], 'fast')
         return false;
@@ -79,7 +83,7 @@ function install_key_navigation($) {
     }
     
     var down_post = function(e) {
-      if(post_offset + 1 < max_post && e.which == 110) {
+      if(post_offset + 1 < max_post && (e.which == 110 && no_modifiers(e))) {
         post_offset = post_offset + 1
         $.scrollTo(posts[post_offset], 'fast')
         return false;
@@ -90,10 +94,10 @@ function install_key_navigation($) {
     }
     
     var top_bottom_post = function(e) {
-      if(e.which == 116) {
+      if(e.which == 116 && no_modifiers(e)) {
         $.scrollTo(posts[0], 'normal') ; post_offset = 0 ; return false;
       }
-      if(e.which == 98) {
+      if(e.which == 98 && no_modifiers(e)) {
         $.scrollTo(posts[max_post - 1], 'normal') ; post_offset = max_post - 1 ;return false;
       }
       return true;
