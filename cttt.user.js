@@ -107,12 +107,34 @@ function install_key_navigation($) {
   }
 }
 
+function forum_navigation_fixes($) {
+  $("div.forum_detail_pagination > a").css("font-size", "2.0em") // Kiyo requested for his old-man eyes.
+  $("*").keypress(function(e) {
+    if(e.which == 91 && no_modifiers(e) && $('a.page_jump').length > 0) {
+      var lset = $('a.page_jump:first')
+      if(lset.attr("title") == "previous page") {
+        document.location = $(lset).attr('href');
+        return false;
+      }
+    }
+    if(e.which == 93 && no_modifiers(e) && $('a.page_jump').length > 0) {
+      var lset = $('a.page_jump:last')
+      if(lset.attr("title") == "next page") {
+        document.location = lset.attr('href');
+        return false;
+      }
+    }
+    return true;
+  })
+}
+
 // Mainline
 // All your GM code must be inside this function
 function letsJQuery() {
   make_hot_gists($);
   make_hot_skitchs($);
   install_key_navigation($);
+  forum_navigation_fixes($);
 }
  
 // Step 1, grab jquery & jquery.scrollto
