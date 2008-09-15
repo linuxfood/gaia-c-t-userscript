@@ -6,11 +6,23 @@
 // ==/UserScript==
  
 /* ========================================
+   General support
+   ======================================== */
+
+function injectScript(url) {
+  var s_tag = document.createElement('script');
+  s_tag.src = url;
+  s_tag.type = 'text/javascript';
+  document.getElementsByTagName('head')[0].appendChild(s_tag);
+}
+  
+/* ========================================
    Gist support
    ======================================== */
 
 function extract_gist_reference($link) {
   var gr = $link.attr("text").match(/https?\:\/\/gist\.github\.com\/\w{1,}/)
+  unsafeWindow.bab = gr;
   if(gr) { return gr[0]; }
   else { return null }
 }
@@ -45,20 +57,65 @@ function make_hot_skitchs($) {
 }
  
 
+/* ========================================
+   Keynav support
+   ======================================== */
+
+function install_key_navigation($) {
+  var posts = $('div.post')
+  if(posts.length > 0) {
+    var max_post = posts.length
+    var post_offset = 0;
+    
+    var up_post = function(e) {
+      if(post_offset > 0 && e.which == 112) {
+        post_offset = post_offset - 1
+        $.scrollTo(posts[post_offset], 'fast')
+        return false;
+      }
+      else {
+        return true;
+      }
+    }
+    
+    var down_post = function(e) {
+      if(post_offset + 1 < max_post && e.which == 110) {
+        post_offset = post_offset + 1
+        $.scrollTo(posts[post_offset], 'fast')
+        return false;
+      }
+      else {
+        return true;
+      }
+    }
+    
+    var top_bottom_post = function(e) {
+      if(e.which == 116) {
+        $.scrollTo(posts[0], 'normal') ; return false;
+      }
+      if(e.which == 98) {
+        $.scrollTo(posts[max_post - 1], 'normal') ; return false;
+      }
+      return true;
+    }
+    
+    $('*').keypress(up_post).keypress(down_post).keypress(top_bottom_post);
+  }
+}
+
+// Mainline
 // All your GM code must be inside this function
 function letsJQuery() {
   make_hot_gists($);
   make_hot_skitchs($);
+  install_key_navigation($);
 }
  
-// Get jquery into gaia.
-var GM_JQ = document.createElement('script');
-GM_JQ.src = 'http://jquery.com/src/jquery-latest.js';
-GM_JQ.type = 'text/javascript';
-document.getElementsByTagName('head')[0].appendChild(GM_JQ);
- 
- 
-// Check if jQuery's loaded
+// Step 1, grab jquery & jquery.scrollto
+injectScript('http://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.js');
+injectScript('http://flesler-plugins.googlecode.com/files/jquery.scrollTo-1.4.0.js')
+
+// Step 2, Check if jQuery's loaded and if so launch into it.
 // Working on getting this script to work under greasekit in safari. This approach doesn't seem to work?
 function FF_GM_wait() {
   if(typeof unsafeWindow.jQuery == 'undefined') { window.setTimeout(FF_GM_wait,100); }
