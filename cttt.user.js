@@ -91,10 +91,10 @@ function install_key_navigation($) {
     
     var top_bottom_post = function(e) {
       if(e.which == 116) {
-        $.scrollTo(posts[0], 'normal') ; return false;
+        $.scrollTo(posts[0], 'normal') ; post_offset = 0 ; return false;
       }
       if(e.which == 98) {
-        $.scrollTo(posts[max_post - 1], 'normal') ; return false;
+        $.scrollTo(posts[max_post - 1], 'normal') ; post_offset = max_post - 1 ;return false;
       }
       return true;
     }
