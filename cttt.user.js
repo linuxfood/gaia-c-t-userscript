@@ -5,16 +5,18 @@
 // @include http://www.gaiaonline.com/forum/c-t-tech-talk/*
 // ==/UserScript==
  
- 
+/* ========================================
+   Gist support
+   ======================================== */
+
 function extract_gist_reference($link) {
   var gr = $link.attr("text").match(/https?\:\/\/gist\.github\.com\/\w{1,}/)
   unsafeWindow.bab = gr;
   if(gr) { return gr[0]; }
   else { return null }
 }
- 
-// All your GM code must be inside this function
-function letsJQuery() {
+
+function make_hot_gists($){
   $("div:not(.quoted) > a[href*=gist.github.com]").each(
     function() {
       var $elem = $(this);
@@ -32,9 +34,25 @@ function letsJQuery() {
                                  "border-bottom": "solid 1px", "font-family": "Consolas,sans-serif",
                                  "text-align": "center"});
 }
+
+/* ========================================
+   Skitch support
+   ======================================== */
+
+function make_hot_skitchs($) {
+  $("a[href*=img.skitch.com]").each(function() {
+    this.innerHTML = "<img src=\"" + $(this).attr("text") + "\">"
+  })
+}
  
-// Step 1, get jquery into gaia.
-// Add jQuery
+
+// All your GM code must be inside this function
+function letsJQuery() {
+  make_hot_gists($);
+  make_hot_skitchs($);
+}
+ 
+// Get jquery into gaia.
 var GM_JQ = document.createElement('script');
 GM_JQ.src = 'http://jquery.com/src/jquery-latest.js';
 GM_JQ.type = 'text/javascript';
@@ -49,7 +67,7 @@ function FF_GM_wait() {
 }
 function SF_GM_wait() {
   if( typeof window.jQuery == 'undefined' ) { window.setTimeout(SF_GM_WAIT, 100); }
-  else {$ = window.jQuery; letsJQuery(); }
+  else {$ = window.jQuery; letsJQuery(); } // Once we have it, jumpstart the processing!
 }
 if(this.unsafeWindow) {
   FF_GM_wait();
