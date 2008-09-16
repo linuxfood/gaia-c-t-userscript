@@ -6,6 +6,37 @@
 // ==/UserScript==
 
 /* ========================================
+   Key vars
+   ======================================== */
+
+/* Default keybindings */
+
+var keys = {
+  nextPage:93,
+  prevPage:91,
+
+  topPost:116,
+  botPost:98,
+  nextPost:112,
+  prevPost:110,
+  reply:114
+};
+
+
+/* Vi-like keybindings */
+/*
+var keys = {
+  nextPage: 93,
+  prevPage: 91,
+
+  topPost: 116,
+  botPost: 98,
+  nextPost: 107,
+  prevPost: 106,
+  reply: 114
+};
+*/
+/* ========================================
    General support
    ======================================== */
 
@@ -21,8 +52,8 @@ function injectCss() {
   c_tag.innerHTML = '.selected { border: 3px solid red; }'
   document.getElementsByTagName('head')[0].appendChild(c_tag);
 }
-  
-  
+
+
 /* ========================================
    Gist support
    ======================================== */
@@ -76,13 +107,13 @@ function install_key_navigation($) {
   if(posts.length > 0) {
     
     var up_post = function(e) {
-      if(e.which == 112 && no_modifiers(e)) {
+      if(e.which == keys.nextPost && no_modifiers(e)) {
         if(post_offset > 0) {
           post_offset = post_offset - 1
           $.scrollTo(posts[post_offset], 'fast')
           return false;
         }
-        if(post_offset == 0 && (e.which == 112 && no_modifiers(e)) && $('a.page_jump').length > 0) {
+        if(post_offset == 0 && $('a.page_jump').length > 0) {
           // Jump to previous page instead!
           $('a.page_jump').each( function (i) {
             if($(this).attr("title") == "previous page") {
@@ -97,7 +128,7 @@ function install_key_navigation($) {
     }
     
     var down_post = function(e) {
-      if(e.which == 110 && no_modifiers(e)) {
+      if(e.which == keys.prevPost && no_modifiers(e)) {
         if(post_offset + 1 < max_post) {
           post_offset = post_offset + 1
           $.scrollTo(posts[post_offset], 'fast')
@@ -118,10 +149,10 @@ function install_key_navigation($) {
     }
     
     var top_bottom_post = function(e) {
-      if(e.which == 116 && no_modifiers(e)) {
+      if(e.which == keys.topPost && no_modifiers(e)) {
         $.scrollTo(posts[0], 'normal') ; post_offset = 0 ; return false;
       }
-      if(e.which == 98 && no_modifiers(e)) {
+      if(e.which == keys.botPost && no_modifiers(e)) {
         $.scrollTo(posts[max_post - 1], 'normal') ; post_offset = max_post - 1 ;return false;
       }
       return true;
@@ -134,23 +165,23 @@ function install_key_navigation($) {
 function forum_navigation_fixes($) {
   $("div.forum_detail_pagination > a").css("font-size", "2.0em") // Kiyo requested for his old-man eyes.
   $("*").keypress(function(e) {
-    if(e.which == 91 && no_modifiers(e) && $('a.page_jump').length > 0) {
+    if(e.which == keys.prevPage && no_modifiers(e) && $('a.page_jump').length > 0) {
       var lset = $('a.page_jump:first')
       if(lset.attr("title") == "previous page") {
         document.location = $(lset).attr('href');
         return false;
       }
     }
-    if(e.which == 93 && no_modifiers(e) && $('a.page_jump').length > 0) {
+    if(e.which == keys.nextPage && no_modifiers(e) && $('a.page_jump').length > 0) {
       var lset = $('a.page_jump:last')
       if(lset.attr("title") == "next page") {
         document.location = lset.attr('href');
         return false;
       }
     }
-    if(e.which == 114 && no_modifiers(e) && $('a.postReply').length > 0) {
+    if(e.which == keys.reply && no_modifiers(e) && $('a.postReply').length > 0) {
       if(reply_count == 0) {
-        $.timer(500, function (timer) {
+        $.timer(700, function (timer) {
           var lset = $('a.postReply:first');
           document.location = $(lset).attr('href');
           reply_count = 0;
@@ -182,11 +213,11 @@ function letsJQuery() {
 
 /* ========================================
  *
- *	jQuery Timer plugin v0.1
- *		Matt Schmidt [http://www.mattptr.net]
+ *  jQuery Timer plugin v0.1
+ *    Matt Schmidt [http://www.mattptr.net]
  *
- *	Licensed under the BSD License:
- *		http://mattptr.net/license/license.txt
+ *  Licensed under the BSD License:
+ *    http://mattptr.net/license/license.txt
  *
  * ========================================*/
  
@@ -196,64 +227,64 @@ function letsJQuery() {
   *
   * timer() provides a cleaner way to handle intervals  
   *
-  *	@usage
+  * @usage
   * $.timer(interval, callback);
   *
   *
   * @example
   * $.timer(1000, function (timer) {
-  * 	alert("hello");
-  * 	timer.stop();
+  *   alert("hello");
+  *   timer.stop();
   * });
   * @desc Show an alert box after 1 second and stop
   * 
   * @example
   * var second = false;
-  *	$.timer(1000, function (timer) {
-  *		if (!second) {
-  *			alert('First time!');
-  *			second = true;
-  *			timer.reset(3000);
-  *		}
-  *		else {
-  *			alert('Second time');
-  *			timer.stop();
-  *		}
-  *	});
+  * $.timer(1000, function (timer) {
+  *   if (!second) {
+  *     alert('First time!');
+  *     second = true;
+  *     timer.reset(3000);
+  *   }
+  *   else {
+  *     alert('Second time');
+  *     timer.stop();
+  *   }
+  * });
   * @desc Show an alert box after 1 second and show another after 3 seconds
   *
-  * 
+  *
   */
 
-	var interval = interval || 100;
+   var interval = interval || 100;
 
-	if (!callback)
-		return false;
-	
-	_timer = function (interval, callback) {
-		this.stop = function () {
-			clearInterval(self.id);
-		};
-		
-		this.internalCallback = function () {
-			callback(self);
-		};
-		
-		this.reset = function (val) {
-			if (self.id)
-				clearInterval(self.id);
-			
-			var val = val || 100;
-			this.id = setInterval(this.internalCallback, val);
-		};
-		
-		this.interval = interval;
-		this.id = setInterval(this.internalCallback, this.interval);
-		
-		var self = this;
-	};
-	
-	return new _timer(interval, callback);
+   if (!callback)
+     return false;
+
+   _timer = function (interval, callback) {
+     this.stop = function () {
+       clearInterval(self.id);
+     };
+
+     this.internalCallback = function () {
+       callback(self);
+     };
+
+     this.reset = function (val) {
+       if (self.id)
+         clearInterval(self.id);
+
+       var val = val || 100;
+       this.id = setInterval(this.internalCallback, val);
+     };
+
+     this.interval = interval;
+     this.id = setInterval(this.internalCallback, this.interval);
+
+     var self = this;
+   };
+
+  return new _timer(interval, callback);
  };
 
   posts = $('div.post')
