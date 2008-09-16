@@ -181,7 +181,7 @@ function forum_navigation_fixes($) {
     }
     if(e.which == keys.reply && no_modifiers(e) && $('a.postReply').length > 0) {
       if(reply_count == 0) {
-        $.timer(700, function (timer) {
+        $.timer(800, function (timer) {
           var lset = $('a.postReply:first');
           document.location = $(lset).attr('href');
           reply_count = 0;
