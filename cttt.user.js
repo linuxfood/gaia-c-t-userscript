@@ -124,6 +124,11 @@ function forum_navigation_fixes($) {
         return false;
       }
     }
+    if(e.which == 114 && no_modifiers(e) && $('a.postReply').length > 0) {
+    	var lset = $('a.postReply:first')
+    	document.location = $(lset).attr('href');
+    	return false;
+    }
     return true;
   })
 }
