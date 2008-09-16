@@ -181,18 +181,23 @@ function forum_navigation_fixes($) {
     }
     if(e.which == keys.reply && no_modifiers(e) && $('a.postReply').length > 0) {
       if(reply_count == 0) {
-        $.timer(800, function (timer) {
+        reply_timer = $.timer(700, function (timer) {
+          GM_log("doing standard reply")
           var lset = $('a.postReply:first');
+          timer.stop()
           document.location = $(lset).attr('href');
-          reply_count = 0;
+          reply_count = 0
         })
         reply_count++
+        GM_log("reply_count = " + reply_count.toString())
         var post = $(posts[post_offset])
         $($(post).children('div.postcontent')[0]).toggleClass('selected')
       }
       else if( reply_count > 0 ) {
+        GM_log("doing quoted reply of: " + post_offset.toString())
         var opts = $(posts[post_offset]).children('div.options')[0]
         var quote = $(opts).children('a.post-quote')
+        reply_timer.stop()
         document.location = $(quote).attr('href')
         reply_count = 0
       }
@@ -209,6 +214,7 @@ var posts
 var post_offset = 0
 var max_post = 0
 var reply_count = 0;
+var reply_timer
 function letsJQuery() {
 
 /* ========================================
