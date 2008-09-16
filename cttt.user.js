@@ -130,7 +130,7 @@ function forum_navigation_fixes($) {
     }
     if(e.which == 114 && no_modifiers(e) && $('a.postReply').length > 0) {
       if(reply_count == 0) {
-        $.timer(50000, function (timer) {
+        $.timer(500, function (timer) {
           var lset = $('a.postReply:first');
           document.location = $(lset).attr('href');
           reply_count = 0;
