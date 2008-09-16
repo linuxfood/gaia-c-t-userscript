@@ -4,7 +4,7 @@
 // @description Steezes up Gaia's C&T:TT forum!
 // @include http://www.gaiaonline.com/forum/c-t-tech-talk/*
 // ==/UserScript==
- 
+
 /* ========================================
    General support
    ======================================== */
@@ -15,6 +15,13 @@ function injectScript(url) {
   s_tag.type = 'text/javascript';
   document.getElementsByTagName('head')[0].appendChild(s_tag);
 }
+
+function injectCss() {
+  var c_tag = document.createElement('style');
+  c_tag.innerHTML = '.selected { border: 3px solid red; }'
+  document.getElementsByTagName('head')[0].appendChild(c_tag);
+}
+  
   
 /* ========================================
    Gist support
@@ -66,10 +73,7 @@ function no_modifiers(event) {
 }
 
 function install_key_navigation($) {
-  var posts = $('div.post')
   if(posts.length > 0) {
-    var max_post = posts.length
-    var post_offset = 0;
     
     var up_post = function(e) {
       if(post_offset > 0 && (e.which == 112 && no_modifiers(e))) {
@@ -125,17 +129,115 @@ function forum_navigation_fixes($) {
       }
     }
     if(e.which == 114 && no_modifiers(e) && $('a.postReply').length > 0) {
-    	var lset = $('a.postReply:first')
-    	document.location = $(lset).attr('href');
-    	return false;
+      if(reply_count == 0) {
+        $.timer(50000, function (timer) {
+          var lset = $('a.postReply:first');
+          document.location = $(lset).attr('href');
+          reply_count = 0;
+        })
+        reply_count++
+        var post = $(posts[post_offset])
+        $($(post).children('div.postcontent')[0]).toggleClass('selected')
+      }
+      else if( reply_count > 0 ) {
+        var opts = $(posts[post_offset]).children('div.options')[0]
+        var quote = $(opts).children('a.post-quote')
+        document.location = $(quote).attr('href')
+        reply_count = 0
+      }
+      return false
     }
+
     return true;
   })
 }
 
 // Mainline
 // All your GM code must be inside this function
+var posts
+var post_offset = 0
+var max_post = 0
+var reply_count = 0;
 function letsJQuery() {
+
+/* ========================================
+ *
+ *	jQuery Timer plugin v0.1
+ *		Matt Schmidt [http://www.mattptr.net]
+ *
+ *	Licensed under the BSD License:
+ *		http://mattptr.net/license/license.txt
+ *
+ * ========================================*/
+ 
+ $.timer = function (interval, callback)
+ {
+ /**
+  *
+  * timer() provides a cleaner way to handle intervals  
+  *
+  *	@usage
+  * $.timer(interval, callback);
+  *
+  *
+  * @example
+  * $.timer(1000, function (timer) {
+  * 	alert("hello");
+  * 	timer.stop();
+  * });
+  * @desc Show an alert box after 1 second and stop
+  * 
+  * @example
+  * var second = false;
+  *	$.timer(1000, function (timer) {
+  *		if (!second) {
+  *			alert('First time!');
+  *			second = true;
+  *			timer.reset(3000);
+  *		}
+  *		else {
+  *			alert('Second time');
+  *			timer.stop();
+  *		}
+  *	});
+  * @desc Show an alert box after 1 second and show another after 3 seconds
+  *
+  * 
+  */
+
+	var interval = interval || 100;
+
+	if (!callback)
+		return false;
+	
+	_timer = function (interval, callback) {
+		this.stop = function () {
+			clearInterval(self.id);
+		};
+		
+		this.internalCallback = function () {
+			callback(self);
+		};
+		
+		this.reset = function (val) {
+			if (self.id)
+				clearInterval(self.id);
+			
+			var val = val || 100;
+			this.id = setInterval(this.internalCallback, val);
+		};
+		
+		this.interval = interval;
+		this.id = setInterval(this.internalCallback, this.interval);
+		
+		var self = this;
+	};
+	
+	return new _timer(interval, callback);
+ };
+
+  posts = $('div.post')
+  max_post = posts.length
   make_hot_gists($);
   make_hot_skitchs($);
   install_key_navigation($);
@@ -145,6 +247,7 @@ function letsJQuery() {
 // Step 1, grab jquery & jquery.scrollto
 injectScript('http://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.js');
 injectScript('http://flesler-plugins.googlecode.com/files/jquery.scrollTo-1.4.0.js')
+injectCss()
 
 // Step 2, Check if jQuery's loaded and if so launch into it.
 // Working on getting this script to work under greasekit in safari. This approach doesn't seem to work?
