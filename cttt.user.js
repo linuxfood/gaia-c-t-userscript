@@ -76,23 +76,43 @@ function install_key_navigation($) {
   if(posts.length > 0) {
     
     var up_post = function(e) {
-      if(post_offset > 0 && (e.which == 112 && no_modifiers(e))) {
-        post_offset = post_offset - 1
-        $.scrollTo(posts[post_offset], 'fast')
-        return false;
-      }
-      else {
+      if(e.which == 112 && no_modifiers(e)) {
+        if(post_offset > 0) {
+          post_offset = post_offset - 1
+          $.scrollTo(posts[post_offset], 'fast')
+          return false;
+        }
+        if(post_offset == 0 && (e.which == 112 && no_modifiers(e)) && $('a.page_jump').length > 0) {
+          // Jump to previous page instead!
+          $('a.page_jump').each( function (i) {
+            if($(this).attr("title") == "previous page") {
+              document.location = $(this).attr('href');
+              return false;
+            }
+          })
+          return false;
+        }
         return true;
       }
     }
     
     var down_post = function(e) {
-      if(post_offset + 1 < max_post && (e.which == 110 && no_modifiers(e))) {
-        post_offset = post_offset + 1
-        $.scrollTo(posts[post_offset], 'fast')
-        return false;
-      }
-      else {
+      if(e.which == 110 && no_modifiers(e)) {
+        if(post_offset + 1 < max_post) {
+          post_offset = post_offset + 1
+          $.scrollTo(posts[post_offset], 'fast')
+          return false;
+        }
+        if(post_offset == max_post -1 && $('a.page_jump').length > 0) {
+          // Jump to next page instead!
+          $('a.page_jump').each( function (i) {
+            if($(this).attr("title") == "next page") {
+              document.location = $(this).attr('href');
+              return false;
+            }
+          })
+          return false;
+        }
         return true;
       }
     }
