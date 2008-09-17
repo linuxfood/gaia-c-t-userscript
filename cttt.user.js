@@ -50,6 +50,10 @@ function injectCss() {
   document.getElementsByTagName('head')[0].appendChild(c_tag);
 }
 
+function repoURL(path) {
+  return "http://github.com/linuxfood/gaia-c-t-userscript/tree/master/" + path + "?raw=true"
+}
+
 /* ========================================
    Gist support
    ======================================== */
@@ -250,7 +254,7 @@ function make_signature_switches($){ // Creates switches in Gaian post status ba
 		//creat markup and inject into status bar
 		var newhtml = '</span><a title="'+action+' Signature" class="signature_switch" href="javascript:switch_signature(\''+action+'\',\'signature-'+user+'\')">'+action+' Signature</a>';		
 		$block.html($block.html().replace('</span>', newhtml));	
-		$('a.signature_switch').css({background: 'url(http://gaia.aephex.com/cttt/switch_sig.gif) top left no-repeat', width: '22px'});
+		$('a.signature_switch').css({background: 'url(' + repoURL('imgs/switch_sig.gif') + ') top left no-repeat', width: '22px'});
 		
 		//hide cookied signatures
 		if($.cookie(acookie)==1){
@@ -346,10 +350,10 @@ function letsJQuery() {
 }
  
 // Step 1, grab jquery & plugin libraries
-injectScript('http://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.js');
-injectScript('http://gaia.aephex.com/cttt/jquery.cookie.js');
-injectScript('http://flesler-plugins.googlecode.com/files/jquery.scrollTo-1.4.0.js');
-injectScript('http://gaia.aephex.com/cttt/jquery.signature.js');
+injectScript(repoURL('plugins/jquery.js'));
+injectScript(repoURL('plugins/jquery.cookie.js'));
+injectScript(repoURL('plugins/jquery.scrollTo-1.4.0.js'));
+injectScript(repoURL('plugins/jquery.signature.js')); // Not sure if plugins/ was a good spot, oh well.
 injectCss()
 
 // Step 2, Check if jQuery's loaded and if so launch into it.
