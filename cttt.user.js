@@ -8,13 +8,11 @@
 /* ========================================
    Key vars
    ======================================== */
-
+   
 /* Default keybindings */
-
 var keys = {
   nextPage:93,
   prevPage:91,
-
   topPost:116,
   botPost:98,
   nextPost:112,
@@ -22,13 +20,11 @@ var keys = {
   reply:114
 };
 
-
 /* Vi-like keybindings */
 /*
 var keys = {
   nextPage: 93,
   prevPage: 91,
-
   topPost: 116,
   botPost: 98,
   nextPost: 107,
@@ -36,10 +32,11 @@ var keys = {
   reply: 114
 };
 */
+
 /* ========================================
    General support
    ======================================== */
-
+   
 function injectScript(url) {
   var s_tag = document.createElement('script');
   s_tag.src = url;
@@ -53,11 +50,10 @@ function injectCss() {
   document.getElementsByTagName('head')[0].appendChild(c_tag);
 }
 
-
 /* ========================================
    Gist support
    ======================================== */
-
+   
 function extract_gist_reference($link) {
   var gr = $link.attr("text").match(/https?\:\/\/gist\.github\.com\/\d{1,}/)
   unsafeWindow.bab = gr;
@@ -87,18 +83,17 @@ function make_hot_gists($){
 /* ========================================
    Skitch support
    ======================================== */
-
+   
 function make_hot_skitchs($) {
   $("a[href*=img.skitch.com]").each(function() {
     this.innerHTML = "<img src=\"" + $(this).attr("text") + "\">"
   })
 }
  
-
 /* ========================================
    Keynav support
    ======================================== */
-
+   
 function no_modifiers(event) {
   return !(event.ctrlKey || event.altKey || event.metaKey)
 }
@@ -203,9 +198,65 @@ function forum_navigation_fixes($) {
       }
       return false
     }
-
     return true;
   })
+}
+
+/* ========================================
+Signature Switch support
+==========================================
+
+	::::	switch_signature(), hit_the_sig_switch() are injected into head
+	::::	jquery.signature.js
+	
+function switch_signature(which, name){
+	if(which == 'Disable'){$.cookie(name, 1, {expires: 30, path: '/', domain: 'gaiaonline.com'});hit_the_sig_switch(name);}
+	else if (which == 'Enable'){$.cookie(name, null);hit_the_sig_switch(name);}
+}
+
+function hit_the_sig_switch(user){
+	$('a.signature_switch').each(function(){ var $sig_switch = $(this);
+		var newswitch;
+		if($sig_switch.attr("href").search("'Disable','"+user+"'")!=-1){
+			newhref = $sig_switch.attr("href").replace("Disable", "Enable");
+			newtitle = $sig_switch.attr("title").replace("Disable", "Enable");
+			$sig_switch.attr("href", newhref);
+			$sig_switch.attr("title", newtitle);
+			$('div[class*="'+user+'"]').css({display: "none"});			
+		} else if($sig_switch.attr("href").search("'Enable','"+user+"'")!=-1){
+			newhref = $sig_switch.attr("href").replace("Enable", "Disable");
+			newtitle = $sig_switch.attr("title").replace("Enable", "Disable");
+			$sig_switch.attr("href", newhref);
+			$sig_switch.attr("title", newtitle);
+			$('div[class*="'+user+'"]').css({display: "block"});
+		}		
+	});	
+}
+
+Todo: clean up sigs after enabling on a post other than the last post on page by that user.
+*/
+
+function make_signature_switches($){ // Creates switches in Gaian post status bars
+	$('div.statuslinks').each(function(){	var $block = $(this);	
+		
+		//get user of current post
+		var user = $block.html().match(/profiles\/\w{1,}\/?/).toString();	
+		user = user.substring(9,user.lastIndexOf('/'));
+		
+		//name and check for cookie, set action for switch
+		var acookie = 'signature-'+user;
+		var action = ($.cookie(acookie))?'Enable':'Disable';
+		
+		//creat markup and inject into status bar
+		var newhtml = '</span><a title="'+action+' Signature" class="signature_switch" href="javascript:switch_signature(\''+action+'\',\'signature-'+user+'\')">'+action+' Signature</a>';		
+		$block.html($block.html().replace('</span>', newhtml));	
+		$('a.signature_switch').css({background: 'url(http://gaia.aephex.com/cttt/switch_sig.gif) top left no-repeat', width: '22px'});
+		
+		//hide cookied signatures
+		if($.cookie(acookie)==1){
+			$('div[class*="'+acookie+'"]').css({display: "none"});
+		 }		
+    });	
 }
 
 // Mainline
@@ -261,49 +312,44 @@ function letsJQuery() {
   *
   *
   */
-
+  
    var interval = interval || 100;
-
    if (!callback)
      return false;
-
    _timer = function (interval, callback) {
      this.stop = function () {
        clearInterval(self.id);
      };
-
      this.internalCallback = function () {
        callback(self);
      };
-
      this.reset = function (val) {
        if (self.id)
          clearInterval(self.id);
-
        var val = val || 100;
        this.id = setInterval(this.internalCallback, val);
      };
-
      this.interval = interval;
      this.id = setInterval(this.internalCallback, this.interval);
-
      var self = this;
    };
-
   return new _timer(interval, callback);
  };
-
+ 
   posts = $('div.post')
   max_post = posts.length
   make_hot_gists($);
+  make_signature_switches($);
   make_hot_skitchs($);
   install_key_navigation($);
   forum_navigation_fixes($);
 }
  
-// Step 1, grab jquery & jquery.scrollto
+// Step 1, grab jquery & plugin libraries
 injectScript('http://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.js');
-injectScript('http://flesler-plugins.googlecode.com/files/jquery.scrollTo-1.4.0.js')
+injectScript('http://gaia.aephex.com/cttt/jquery.cookie.js');
+injectScript('http://flesler-plugins.googlecode.com/files/jquery.scrollTo-1.4.0.js');
+injectScript('http://gaia.aephex.com/cttt/jquery.signature.js');
 injectCss()
 
 // Step 2, Check if jQuery's loaded and if so launch into it.
@@ -312,6 +358,7 @@ function FF_GM_wait() {
   if(typeof unsafeWindow.jQuery == 'undefined') { window.setTimeout(FF_GM_wait,100); }
   else { $ = unsafeWindow.jQuery; letsJQuery(); }
 }
+
 function SF_GM_wait() {
   if( typeof window.jQuery == 'undefined' ) { window.setTimeout(SF_GM_WAIT, 100); }
   else {$ = window.jQuery; letsJQuery(); } // Once we have it, jumpstart the processing!
