@@ -59,7 +59,7 @@ function injectCss() {
    ======================================== */
 
 function extract_gist_reference($link) {
-  var gr = $link.attr("text").match(/https?\:\/\/gist\.github\.com\/\w{1,}/)
+  var gr = $link.attr("text").match(/https?\:\/\/gist\.github\.com\/\d{1,}/)
   unsafeWindow.bab = gr;
   if(gr) { return gr[0]; }
   else { return null }
