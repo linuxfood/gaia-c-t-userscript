@@ -1,0 +1,15 @@
+This is the Gaia C&T Greasemonkey script.
+
+It makes currently available:
+* keyboard shortcuts
+* gist and sketch inlining
+
+The default keyboard shortcuts are as follows:
+'n' - next post
+'p' - prev post
+']' - next page
+'[' - prev page
+'t' - page top
+'b' - page bottom
+'r' - reply
+'r r' - reply quoting current post
