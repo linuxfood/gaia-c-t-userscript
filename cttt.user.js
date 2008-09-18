@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name SteezyCTTT
-// @namespace http://github.com/kirindave
-// @description Steezes up Gaia's C&T:TT forum!
+// @name gaia-c-t-userscript
+// @namespace http://github.com/linuxfood/gaia-c-t-userscript/
+// @description A greasemonkey script adding a whole mess 'o features to GaiaOnline, C&T
 // @include http://www.gaiaonline.com/forum/c-t-tech-talk/*
 // ==/UserScript==
 
