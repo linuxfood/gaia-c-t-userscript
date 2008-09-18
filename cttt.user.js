@@ -165,18 +165,23 @@ function forum_navigation_fixes($) {
   $("div.forum_detail_pagination > a").css("font-size", "2.0em") // Kiyo requested for his old-man eyes.
   $("*").keypress(function(e) {
     if(e.which == keys.prevPage && no_modifiers(e) && $('a.page_jump').length > 0) {
-      var lset = $('a.page_jump:first')
-      if(lset.attr("title") == "previous page") {
-        document.location = $(lset).attr('href');
-        return false;
-      }
+      $('a.page_jump').each( function (i) {
+        if($(this).attr("title") == "previous page") {
+          document.location = $(this).attr('href');
+          return false;
+        }
+      })
+      return false;
     }
     if(e.which == keys.nextPage && no_modifiers(e) && $('a.page_jump').length > 0) {
-      var lset = $('a.page_jump:last')
-      if(lset.attr("title") == "next page") {
-        document.location = lset.attr('href');
-        return false;
-      }
+      $('a.page_jump').each( function (i) {
+        GM_log($(this).text())
+        if($(this).attr("title") == "next page") {
+          document.location = $(this).attr('href');
+          return false;
+        }
+      })
+      return false;
     }
     if(e.which == keys.reply && no_modifiers(e) && $('a.postReply').length > 0) {
       if(reply_count == 0) {
