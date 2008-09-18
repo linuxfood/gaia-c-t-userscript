@@ -212,54 +212,31 @@ Signature Switch support
 
 	::::	switch_signature(), hit_the_sig_switch() are injected into head
 	::::	jquery.signature.js
-	
-function switch_signature(which, name){
-	if(which == 'Disable'){$.cookie(name, 1, {expires: 30, path: '/', domain: 'gaiaonline.com'});hit_the_sig_switch(name);}
-	else if (which == 'Enable'){$.cookie(name, null);hit_the_sig_switch(name);}
-}
-
-function hit_the_sig_switch(user){
-	$('a.signature_switch').each(function(){ var $sig_switch = $(this);
-		var newswitch;
-		if($sig_switch.attr("href").search("'Disable','"+user+"'")!=-1){
-			newhref = $sig_switch.attr("href").replace("Disable", "Enable");
-			newtitle = $sig_switch.attr("title").replace("Disable", "Enable");
-			$sig_switch.attr("href", newhref);
-			$sig_switch.attr("title", newtitle);
-			$('div[class*="'+user+'"]').css({display: "none"});			
-		} else if($sig_switch.attr("href").search("'Enable','"+user+"'")!=-1){
-			newhref = $sig_switch.attr("href").replace("Enable", "Disable");
-			newtitle = $sig_switch.attr("title").replace("Enable", "Disable");
-			$sig_switch.attr("href", newhref);
-			$sig_switch.attr("title", newtitle);
-			$('div[class*="'+user+'"]').css({display: "block"});
-		}		
-	});	
-}
 
 Todo: clean up sigs after enabling on a post other than the last post on page by that user.
 */
 
 function make_signature_switches($){ // Creates switches in Gaian post status bars
-	$('div.statuslinks').each(function(){	var $block = $(this);	
-		
+	$('div.statuslinks').each(function(){	var $block = $(this);			
+
 		//get user of current post
-		var user = $block.html().match(/profiles\/\w{1,}\/?/).toString();	
-		user = user.substring(9,user.lastIndexOf('/'));
-		
+		var user = $block.html().match(/profiles\/\w{1,}\/?/).toString();
+		user = user.substring(9,user.lastIndexOf('/'));		
+
 		//name and check for cookie, set action for switch
 		var acookie = 'signature-'+user;
-		var action = ($.cookie(acookie))?'Enable':'Disable';
-		
+		var action = ($.cookie(acookie))?'Enable':'Disable';		
+
 		//creat markup and inject into status bar
 		var newhtml = '</span><a title="'+action+' Signature" class="signature_switch" href="javascript:switch_signature(\''+action+'\',\'signature-'+user+'\')">'+action+' Signature</a>';		
 		$block.html($block.html().replace('</span>', newhtml));	
 		$('a.signature_switch').css({background: 'url(' + repoURL('imgs/switch_sig.gif') + ') top left no-repeat', width: '22px'});
-		
+
 		//hide cookied signatures
-		if($.cookie(acookie)==1){
+		if($.cookie(acookie)){
 			$('div[class*="'+acookie+'"]').css({display: "none"});
-		 }		
+		}		
+
     });	
 }
 
