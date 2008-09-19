@@ -37,6 +37,10 @@ var keys = {
    General support
    ======================================== */
    
+function repoURL(path) {
+  return "http://github.com/linuxfood/gaia-c-t-userscript/tree/master/" + path + "?raw=true"
+}
+   
 function injectScript(url) {
   var s_tag = document.createElement('script');
   s_tag.src = url;
@@ -46,12 +50,22 @@ function injectScript(url) {
 
 function injectCss() {
   var c_tag = document.createElement('style');
-  c_tag.innerHTML = '.selected { border: 3px solid red; }'
+  c_tag.innerHTML = "\
+	/*.selected { border: 3px solid red; }*/												\
+	.highlight_post .say_b3 img{display:none;} 												\
+	.highlight_post .say_b1 img{display:none;} 												\
+	.highlight_post .say_a1{background:url("+repoURL('imgs/say_a1.png?raw=true')+");} 		\
+	.highlight_post .say_a2{background:url("+repoURL('imgs/say_a2.png?raw=true')+");} 		\
+	.highlight_post .say_a3{background:url("+repoURL('imgs/say_a3.png?raw=true')+");} 		\
+	.highlight_post .say_b1{background:url("+repoURL('imgs/say_b1.png?raw=true')+");} 		\
+	.highlight_post .say_b1_p{background:url("+repoURL('imgs/say_b1_p.png?raw=true')+");} 	\
+	.highlight_post .say_b3{background:url("+repoURL('imgs/say_b3.png?raw=true')+");} 		\
+	.highlight_post .say_b3_p{background:url("+repoURL('imgs/say_b3_p.png?raw=true')+");} 	\
+	.highlight_post .say_c1{background:url("+repoURL('imgs/say_c1.png?raw=true')+");} 		\
+	.highlight_post .say_c2{background:url("+repoURL('imgs/say_c2.png?raw=true')+");} 		\
+	.highlight_post .say_c3{background:url("+repoURL('imgs/say_c3.png?raw=true')+");}";	 
+  
   document.getElementsByTagName('head')[0].appendChild(c_tag);
-}
-
-function repoURL(path) {
-  return "http://github.com/linuxfood/gaia-c-t-userscript/tree/master/" + path + "?raw=true"
 }
 
 /* ========================================
@@ -102,14 +116,22 @@ function no_modifiers(event) {
   return !(event.ctrlKey || event.altKey || event.metaKey)
 }
 
+function highlight_post(current) {	
+	$('div.post').each(function() {		
+		$(this).removeClass("highlight_post");		
+	});		
+	$(current).addClass("highlight_post");	
+}
+
 function install_key_navigation($) {
   if(posts.length > 0) {
     
     var up_post = function(e) {
       if(e.which == keys.nextPost && no_modifiers(e)) {
         if(post_offset > 0) {
-          post_offset = post_offset - 1
-          $.scrollTo(posts[post_offset], 'fast')
+          post_offset = post_offset - 1;
+          $.scrollTo(posts[post_offset], 'fast');		
+		  highlight_post(posts[post_offset]);		  
           return false;
         }
         if(post_offset == 0 && $('a.page_jump').length > 0) {
@@ -131,6 +153,7 @@ function install_key_navigation($) {
         if(post_offset + 1 < max_post) {
           post_offset = post_offset + 1
           $.scrollTo(posts[post_offset], 'fast')
+		  highlight_post(posts[post_offset]);
           return false;
         }
         if(post_offset == max_post -1 && $('a.page_jump').length > 0) {
@@ -149,15 +172,19 @@ function install_key_navigation($) {
     
     var top_bottom_post = function(e) {
       if(e.which == keys.topPost && no_modifiers(e)) {
-        $.scrollTo(posts[0], 'normal') ; post_offset = 0 ; return false;
+        $.scrollTo(posts[0], 'normal') ; post_offset = 0 ; 
+		highlight_post(posts[post_offset]);
+		return false;
       }
       if(e.which == keys.botPost && no_modifiers(e)) {
-        $.scrollTo(posts[max_post - 1], 'normal') ; post_offset = max_post - 1 ;return false;
+        $.scrollTo(posts[max_post - 1], 'normal') ; post_offset = max_post - 1 ;
+		highlight_post(posts[post_offset]);
+		return false;
       }
       return true;
     }
     
-    $('*').keypress(up_post).keypress(down_post).keypress(top_bottom_post);
+    $('*').keypress(up_post).keypress(down_post).keypress(top_bottom_post);	
   }
 }
 
