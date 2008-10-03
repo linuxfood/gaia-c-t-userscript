@@ -10,11 +10,12 @@ function switch_signature(which, user){
 		//only use switches for this user
 		if($sig_switch.attr("href").search("'Disable','"+user+"'")!=-1){
 		
-			//swap disable for enable in title and link
+			//swap disable for enable in title,text, and link
 			newhref = $sig_switch.attr("href").replace("Disable", "Enable");
 			newtitle = $sig_switch.attr("title").replace("Disable", "Enable");			
 			$sig_switch.attr("href", newhref);
 			$sig_switch.attr("title", newtitle);
+			$sig_switch.text(newtitle);
 			
 			//hide all sigs for this user
 			$('div[class*="'+user+'"]').css({display: "none"});		
@@ -26,6 +27,7 @@ function switch_signature(which, user){
 			newtitle = $sig_switch.attr("title").replace("Enable", "Disable");
 			$sig_switch.attr("href", newhref);
 			$sig_switch.attr("title", newtitle);
+			$sig_switch.text(newtitle);
 			
 			// Get last sig for this user and show it
 			$last_sig = $('div[@class*="'+user+'"]').slice(-1);
