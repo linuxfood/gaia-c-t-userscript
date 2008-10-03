@@ -19,7 +19,7 @@ function switch_signature(which, user){
 			
 			//hide all sigs for this user
 			$('div[class*="'+user+'"]').css({display: "none"});		
-			
+			 
 		} else if($sig_switch.attr("href").search("'Enable','"+user+"'")!=-1){
 			
 			//swap enable for disable in title and link

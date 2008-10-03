@@ -4,10 +4,10 @@
 // @description A greasemonkey script adding a whole mess 'o features to GaiaOnline, C&T
 // @include http://www.gaiaonline.com/forum/c-t-tech-talk/*
 // ==/UserScript==
-
+ 
 /* ========================================
-   Key vars
-   ======================================== */
+Key vars
+======================================== */
    
 /* Default keybindings */
 var keys = {
@@ -19,23 +19,23 @@ var keys = {
   prevPost:110,
   reply:114
 };
-
+ 
 /* Vi-like keybindings */
 /*
 var keys = {
-  nextPage: 93,
-  prevPage: 91,
-  topPost: 116,
-  botPost: 98,
-  nextPost: 107,
-  prevPost: 106,
-  reply: 114
+	nextPage: 93,
+	prevPage: 91,
+	topPost: 116,
+	botPost: 98,
+	nextPost: 107,
+	prevPost: 106,
+	reply: 114
 };
 */
-
+ 
 /* ========================================
-   General support
-   ======================================== */
+General support
+======================================== */
    
 function repoURL(path) {
   return "http://github.com/linuxfood/gaia-c-t-userscript/tree/master/" + path + "?raw=true"
@@ -47,30 +47,33 @@ function injectScript(url) {
   s_tag.type = 'text/javascript';
   document.getElementsByTagName('head')[0].appendChild(s_tag);
 }
-
+ 
 function injectCss() {
   var c_tag = document.createElement('style');
   c_tag.innerHTML = "\
-	/*.selected { border: 3px solid red; }*/												\
-	.highlight_post .say_b3 img{display:none;} 												\
-	.highlight_post .say_b1 img{display:none;} 												\
-	.highlight_post .say_a1{background:url("+repoURL('imgs/say_a1.png?raw=true')+");} 		\
-	.highlight_post .say_a2{background:url("+repoURL('imgs/say_a2.png?raw=true')+");} 		\
-	.highlight_post .say_a3{background:url("+repoURL('imgs/say_a3.png?raw=true')+");} 		\
-	.highlight_post .say_b1{background:url("+repoURL('imgs/say_b1.png?raw=true')+");} 		\
-	.highlight_post .say_b1_p{background:url("+repoURL('imgs/say_b1_p.png?raw=true')+");} 	\
-	.highlight_post .say_b3{background:url("+repoURL('imgs/say_b3.png?raw=true')+");} 		\
-	.highlight_post .say_b3_p{background:url("+repoURL('imgs/say_b3_p.png?raw=true')+");} 	\
-	.highlight_post .say_c1{background:url("+repoURL('imgs/say_c1.png?raw=true')+");} 		\
-	.highlight_post .say_c2{background:url("+repoURL('imgs/say_c2.png?raw=true')+");} 		\
-	.highlight_post .say_c3{background:url("+repoURL('imgs/say_c3.png?raw=true')+");}";	 
-  
+  /*.selected { border: 3px solid red; }*/                        \
+  .highlight_post .say_b3 img{display:none;}                         \
+  .highlight_post .say_b1 img{display:none;}                         \
+  .highlight_post .say_a1{background:url("+repoURL('imgs/say_a1.png?raw=true')+");}     \
+  .highlight_post .say_a2{background:url("+repoURL('imgs/say_a2.png?raw=true')+");}     \
+  .highlight_post .say_a3{background:url("+repoURL('imgs/say_a3.png?raw=true')+");}     \
+  .highlight_post .say_b1{background:url("+repoURL('imgs/say_b1.png?raw=true')+");}     \
+  .highlight_post .say_b1_p{background:url("+repoURL('imgs/say_b1_p.png?raw=true')+");}   \
+  .highlight_post .say_b3{background:url("+repoURL('imgs/say_b3.png?raw=true')+");}     \
+  .highlight_post .say_b3_p{background:url("+repoURL('imgs/say_b3_p.png?raw=true')+");}   \
+  .highlight_post .say_c1{background:url("+repoURL('imgs/say_c1.png?raw=true')+");}     \
+  .highlight_post .say_c2{background:url("+repoURL('imgs/say_c2.png?raw=true')+");}     \
+  .highlight_post .say_c3{background:url("+repoURL('imgs/say_c3.png?raw=true')+");} \
+  div.my_bff {position: fixed; top:0px; background-color: white; border-bottom: 1px \
+  #eee solid; display:block; z-index:100; padding-top: 0px; border-top: 0px; \
+  margin: 0px; left: 0px; width: 100%};"
+ 
   document.getElementsByTagName('head')[0].appendChild(c_tag);
 }
-
+ 
 /* ========================================
-   Gist support
-   ======================================== */
+Gist support
+======================================== */
    
 function extract_gist_reference($link) {
   var gr = $link.attr("text").match(/https?\:\/\/gist\.github\.com\/\d{1,}/)
@@ -78,7 +81,7 @@ function extract_gist_reference($link) {
   if(gr) { return gr[0]; }
   else { return null }
 }
-
+ 
 function make_hot_gists($){
   $("div:not(.quoted) > a[href*=gist.github.com]").each(
     function() {
@@ -97,10 +100,10 @@ function make_hot_gists($){
                                  "border-bottom": "solid 1px", "font-family": "Consolas,sans-serif",
                                  "text-align": "center"});
 }
-
+ 
 /* ========================================
-   Skitch support
-   ======================================== */
+Skitch support
+======================================== */
    
 function make_hot_skitchs($) {
   $("a[href*=img.skitch.com]").each(function() {
@@ -109,20 +112,20 @@ function make_hot_skitchs($) {
 }
  
 /* ========================================
-   Keynav support
-   ======================================== */
+Keynav support
+======================================== */
    
 function no_modifiers(event) {
   return !(event.ctrlKey || event.altKey || event.metaKey)
 }
-
-function highlight_post(current) {	
-	$('div.post').each(function() {		
-		$(this).removeClass("highlight_post");		
-	});		
-	$(current).addClass("highlight_post");	
+ 
+function highlight_post(current) {  
+  $('div.post').each(function() {    
+    $(this).removeClass("highlight_post");    
+  });    
+  $(current).addClass("highlight_post");  
 }
-
+ 
 function install_key_navigation($) {
   if(posts.length > 0) {
     
@@ -130,8 +133,8 @@ function install_key_navigation($) {
       if(e.which == keys.nextPost && no_modifiers(e)) {
         if(post_offset > 0) {
           post_offset = post_offset - 1;
-          $.scrollTo(posts[post_offset], 'fast');		
-		  highlight_post(posts[post_offset]);		  
+          $.scrollTo(posts[post_offset], 'fast');    
+     highlight_post(posts[post_offset]);    
           return false;
         }
         if(post_offset == 0 && $('a.page_jump').length > 0) {
@@ -153,7 +156,7 @@ function install_key_navigation($) {
         if(post_offset + 1 < max_post) {
           post_offset = post_offset + 1
           $.scrollTo(posts[post_offset], 'fast')
-		  highlight_post(posts[post_offset]);
+     highlight_post(posts[post_offset]);
           return false;
         }
         if(post_offset == max_post -1 && $('a.page_jump').length > 0) {
@@ -172,24 +175,24 @@ function install_key_navigation($) {
     
     var top_bottom_post = function(e) {
       if(e.which == keys.topPost && no_modifiers(e)) {
-        $.scrollTo(posts[0], 'normal') ; post_offset = 0 ; 
-		highlight_post(posts[post_offset]);
-		return false;
+        $.scrollTo(posts[0], 'normal') ; post_offset = 0 ;
+    highlight_post(posts[post_offset]);
+    return false;
       }
       if(e.which == keys.botPost && no_modifiers(e)) {
         $.scrollTo(posts[max_post - 1], 'normal') ; post_offset = max_post - 1 ;
-		highlight_post(posts[post_offset]);
-		return false;
+    highlight_post(posts[post_offset]);
+    return false;
       }
       return true;
     }
     
-    $('*').keypress(up_post).keypress(down_post).keypress(top_bottom_post);	
+    $('*').keypress(up_post).keypress(down_post).keypress(top_bottom_post);  
   }
 }
-
+ 
 function forum_navigation_fixes($) {
-  $("div.forum_detail_pagination > a").css("font-size", "2.0em") // Kiyo requested for his old-man eyes.
+  $("div.forum_detail_pagination > a").css("font-size", "1.5em") // Kiyo requested for his old-man eyes.
   $("*").keypress(function(e) {
     if(e.which == keys.prevPage && no_modifiers(e) && $('a.page_jump').length > 0) {
       $('a.page_jump').each( function (i) {
@@ -237,41 +240,73 @@ function forum_navigation_fixes($) {
     return true;
   })
 }
-
+ 
 /* ========================================
 Signature Switch support
 ==========================================
-
-	::::	switch_signature(), hit_the_sig_switch() are injected into head
-	::::	jquery.signature.js
-
+ 
+  ::::  switch_signature(), hit_the_sig_switch() are injected into head
+  ::::  jquery.signature.js
+ 
 Todo: clean up sigs after enabling on a post other than the last post on page by that user.
 */
-
+ 
 function make_signature_switches($){ // Creates switches in Gaian post status bars
-	$('div.statuslinks').each(function(){	var $block = $(this);			
+  $('div.dropMenu').each(function(){  var $block = $(this);      
+ 
+    //get user of current post
+    var user = $block.attr("id");
+    user = user.substring(0,user.length-4); 
+  
+ 
+    //name and check for cookie, set action for switch
+    var acookie = 'signature-'+user;
+    var action = ($.cookie(acookie))?'Enable':'Disable';    
+ 
+    //create markup
+    var newhtml = '<li class="menu_seperator"></li><li><a title="' + action + ' Signature" class="signature_switch" href="javascript:switch_signature(\'' + action + '\',\'signature-' + user + '\')">' + action + ' Signature</a></li>';    
+    var menu = $('#'+$block.attr("id"));
 
-		//get user of current post
-		var user = $block.html().match(/profiles\/\w{1,}\/?/).toString();
-		user = user.substring(9,user.lastIndexOf('/'));		
-
-		//name and check for cookie, set action for switch
-		var acookie = 'signature-'+user;
-		var action = ($.cookie(acookie))?'Enable':'Disable';		
-
-		//creat markup and inject into status bar
-		var newhtml = '</span><a title="'+action+' Signature" class="signature_switch" href="javascript:switch_signature(\''+action+'\',\'signature-'+user+'\')">'+action+' Signature</a>';		
-		$block.html($block.html().replace('</span>', newhtml));	
-		$('a.signature_switch').css({background: 'url(' + repoURL('imgs/switch_sig.gif') + ') top left no-repeat', width: '22px'});
-
-		//hide cookied signatures
-		if($.cookie(acookie)){
-			$('div[class*="'+acookie+'"]').css({display: "none"});
-		}		
-
-    });	
+    //and inject into status menu only once
+    if(menu.html().indexOf(newhtml)==-1){
+        menu.append(newhtml);
+    }    
+ 
+    //hide cookied signatures
+    if($.cookie(acookie)){
+      $('div[class*="'+acookie+'"]').css({display: "none"});
+    }    
+ 
+    });  
 }
-
+ 
+function bff_pagination_linkz($) {
+  // $('div.forum_detail_pagination:first')
+  var active = false;
+  var elem = $('div.forum_detail_pagination:first');
+  if(elem.length > 0) {
+    var etop = elem.offset().top;
+    $(unsafeWindow).scroll(function(e) {
+      if(!active && unsafeWindow.scrollY >= etop) {
+        active = true;
+        elem.addClass('my_bff')
+        return true;
+      }
+      if(active && unsafeWindow.scrollY < etop) {
+        active = false;
+        elem.removeClass('my_bff');
+        return true;
+      }
+    });
+    
+    if(unsafeWindow.scrollY >= etop) {
+      active = true;
+      elem.addClass('my_bff')
+      return true;
+    }
+  }
+}
+ 
 // Mainline
 // All your GM code must be inside this function
 var posts
@@ -280,18 +315,18 @@ var max_post = 0
 var reply_count = 0;
 var reply_timer
 function letsJQuery() {
-
+ 
 /**
- * Cookie plugin
- *
- * Copyright (c) 2006 Klaus Hartl (stilbuero.de)
- * Dual licensed under the MIT and GPL licenses:
- * http://www.opensource.org/licenses/mit-license.php
- * http://www.gnu.org/licenses/gpl.html
- *
- */
-
-
+* Cookie plugin
+*
+* Copyright (c) 2006 Klaus Hartl (stilbuero.de)
+* Dual licensed under the MIT and GPL licenses:
+* http://www.opensource.org/licenses/mit-license.php
+* http://www.gnu.org/licenses/gpl.html
+*
+*/
+ 
+ 
 $.cookie = function(name, value, options) {
     if (typeof value != 'undefined') { // name and value given, set cookie
         options = options || {};
@@ -333,53 +368,53 @@ $.cookie = function(name, value, options) {
         return cookieValue;
     }
 };
-
-
-
+ 
+ 
+ 
 /* ========================================
- *
- *  jQuery Timer plugin v0.1
- *    Matt Schmidt [http://www.mattptr.net]
- *
- *  Licensed under the BSD License:
- *    http://mattptr.net/license/license.txt
- *
- * ========================================*/
+*
+* jQuery Timer plugin v0.1
+* Matt Schmidt [http://www.mattptr.net]
+*
+* Licensed under the BSD License:
+* http://mattptr.net/license/license.txt
+*
+* ========================================*/
  
  $.timer = function (interval, callback)
  {
  /**
-  *
-  * timer() provides a cleaner way to handle intervals  
-  *
-  * @usage
-  * $.timer(interval, callback);
-  *
-  *
-  * @example
-  * $.timer(1000, function (timer) {
-  *   alert("hello");
-  *   timer.stop();
-  * });
-  * @desc Show an alert box after 1 second and stop
-  * 
-  * @example
-  * var second = false;
-  * $.timer(1000, function (timer) {
-  *   if (!second) {
-  *     alert('First time!');
-  *     second = true;
-  *     timer.reset(3000);
-  *   }
-  *   else {
-  *     alert('Second time');
-  *     timer.stop();
-  *   }
-  * });
-  * @desc Show an alert box after 1 second and show another after 3 seconds
-  *
-  *
-  */
+*
+* timer() provides a cleaner way to handle intervals
+*
+* @usage
+* $.timer(interval, callback);
+*
+*
+* @example
+* $.timer(1000, function (timer) {
+* alert("hello");
+* timer.stop();
+* });
+* @desc Show an alert box after 1 second and stop
+*
+* @example
+* var second = false;
+* $.timer(1000, function (timer) {
+* if (!second) {
+* alert('First time!');
+* second = true;
+* timer.reset(3000);
+* }
+* else {
+* alert('Second time');
+* timer.stop();
+* }
+* });
+* @desc Show an alert box after 1 second and show another after 3 seconds
+*
+*
+*/
   
    var interval = interval || 100;
    if (!callback)
@@ -411,21 +446,23 @@ $.cookie = function(name, value, options) {
   make_hot_skitchs($);
   install_key_navigation($);
   forum_navigation_fixes($);
+  bff_pagination_linkz($);
 }
  
 // Step 1, grab jquery & plugin libraries
 injectScript(repoURL('plugins/jquery.js'));
 injectScript(repoURL('plugins/jquery.scrollTo-1.4.0.js'));
-injectScript(repoURL('plugins/jquery.signature.js')); // Not sure if plugins/ was a good spot, oh well.
-injectCss()
-
+injectScript(repoURL('plugins/jquery.signature.js'));
+injectScript(repoURL('plugins/jquery.dimensions.js'));
+injectCss();
+ 
 // Step 2, Check if jQuery's loaded and if so launch into it.
 // Working on getting this script to work under greasekit in safari. This approach doesn't seem to work?
 function FF_GM_wait() {
   if(typeof unsafeWindow.jQuery == 'undefined') { window.setTimeout(FF_GM_wait,100); }
   else { $ = unsafeWindow.jQuery; letsJQuery(); }
 }
-
+ 
 function SF_GM_wait() {
   if( typeof window.jQuery == 'undefined' ) { window.setTimeout(SF_GM_WAIT, 100); }
   else {$ = window.jQuery; letsJQuery(); } // Once we have it, jumpstart the processing!
